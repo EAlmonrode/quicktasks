@@ -13,12 +13,12 @@ Task Manager built with FastAPI + MongoDB + HTML/CSS Frontend.
 ## How to Run
 1. Install dependencies:
     ```bash
-    pip install -r backend/requirements.txt
+    pip install -r requirements.txt
     ```
 
 2. Start FastAPI server:
     ```bash
-    uvicorn backend.main:app --reload
+    uvicorn main:app --reload
     ```
 
 3. Open `frontend/index.html` in your browser.
