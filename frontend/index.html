@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QuickTasks</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>QuickTasks</h1>
+
+    <div id="auth">
+        <h2>Register</h2>
+        <input type="email" id="registerEmail" placeholder="Email">
+        <input type="password" id="registerPassword" placeholder="Password">
+        <button onclick="register()">Register</button>
+
+        <h2>Login</h2>
+        <input type="email" id="loginEmail" placeholder="Email">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
+
+    <div id="tasks" style="display:none;">
+        <h2>Your Tasks</h2>
+        <input type="text" id="taskTitle" placeholder="Task title">
+        <input type="text" id="taskDesc" placeholder="Task description">
+        <button onclick="addTask()">Add Task</button>
+
+        <ul id="taskList"></ul>
+    </div>
+
+    <script>
+        let token = '';
+
+        async function register() {
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            const response = await fetch('http://127.0.0.1:8000/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+            alert(data.msg || data.detail);
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const formData = new URLSearchParams();
+            formData.append('username', email);
+            formData.append('password', password);
+
+            const response = await fetch('http://127.0.0.1:8000/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData
+            });
+
+            const data = await response.json();
+            if (data.access_token) {
+                token = data.access_token;
+                document.getElementById('auth').style.display = 'none';
+                document.getElementById('tasks').style.display = 'block';
+                getTasks();
+            } else {
+                alert(data.detail);
+            }
+        }
+
+        async function addTask() {
+            const title = document.getElementById('taskTitle').value;
+            const description = document.getElementById('taskDesc').value;
+
+            await fetch('http://127.0.0.1:8000/tasks', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({ title, description })
+            });
+
+            document.getElementById('taskTitle').value = '';
+            document.getElementById('taskDesc').value = '';
+            getTasks();
+        }
+
+        async function deleteTask(id) {
+            await fetch(`http://127.0.0.1:8000/tasks/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            getTasks();
+        }
+
+        async function getTasks() {
+            const response = await fetch('http://127.0.0.1:8000/tasks', {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+
+            const tasks = await response.json();
+            const list = document.getElementById('taskList');
+            list.innerHTML = '';
+
+            tasks.forEach(task => {
+                const li = document.createElement('li');
+                li.innerHTML = `<b>${task.title}</b>: ${task.description || ''} 
+                    <button onclick="deleteTask('${task._id}')">Delete</button>`;
+                list.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
