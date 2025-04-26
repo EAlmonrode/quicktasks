@@ -1,6 +1,6 @@
-# QuickTasks 📝
+# QuickTasks
 
-Simple Task Manager built with FastAPI + MongoDB + HTML/CSS Frontend.
+Task Manager built with FastAPI + MongoDB + HTML/CSS Frontend.
 
 ## Features
 - User Registration and Login (with JWT Authentication)
@@ -8,7 +8,7 @@ Simple Task Manager built with FastAPI + MongoDB + HTML/CSS Frontend.
 - View Tasks
 - Delete Tasks
 - MongoDB Atlas for database
-- Frontend styled with basic CSS
+- Frontend styled with CSS
 
 ## How to Run
 1. Install dependencies:
@@ -30,7 +30,3 @@ Simple Task Manager built with FastAPI + MongoDB + HTML/CSS Frontend.
 - Passlib (Password hashing)
 - Python-Jose (JWT Tokens)
 - HTML/CSS
-
----
-
-Built with ❤️ by [Your Name]
